@@ -261,7 +261,7 @@ def fft_conv2d(img, psf, otf=None, adjoint=False, circular=False, dtype=tf.float
 
         img = tf.pad(img, [[0,0], [pad_top, pad_bottom],[pad_left, pad_right], [0,0]], "CONSTANT")
         img_shape = img.shape.as_list()
-
+    # transpose it for the native fft to understand
     img_fft = transp_fft2d(img)
 
     if otf is None:
@@ -485,12 +485,13 @@ def tiled_conv_layer(input_img, tiling_factor, tile_size, kernel_size,
     dims = input_img.get_shape().as_list()
 
     with tf.variable_scope(name):
+        # randomly init the 4 * 4 kernels
         kernel_lists = [[tf.get_variable('kernel_%d%d'%(i,j),
                                    shape=(kernel_size, kernel_size, 1, 1),
                                    initializer=tf.contrib.layers.xavier_initializer()) for i in range(tiling_factor)] for j in range(tiling_factor)]
 
         pad_one, pad_two = np.ceil((tile_size - kernel_size)/2).astype(np.uint32), np.floor((tile_size - kernel_size)//2).astype(np.uint32)
-
+        # (32, 32, 1, 1) --> (40, 40, 1, 1)
         kernels_pad = [[tf.pad(kernel, [[pad_one, pad_two], [pad_one, pad_two], [0,0], [0,0]]) for kernel in kernels] for kernels in kernel_lists]
 
         #[tf.summary.image('kernel_%d%d'%(i,j), tf.transpose(kernel, [2,0,1,3])) for j, kernel_list in enumerate(kernels_pad) for i, kernel in enumerate(kernel_list) ]
@@ -498,18 +499,18 @@ def tiled_conv_layer(input_img, tiling_factor, tile_size, kernel_size,
 
         if regularizer is not None:
             tf.contrib.layers.apply_regularization(regularizer, weights_list=[tf.transpose(psf, [2,0,1,3])])
-
+        # change all the small init kernel weight to abs positive
         if nonneg:
             psf = tf.abs(psf)
         tf.summary.image("tiled_psf", tf.expand_dims(tf.squeeze(psf, -1), 0))
 
         img_pad = np.ceil(tile_size * tiling_factor / 2).astype(np.uint32)
         input_img_pad = tf.pad(input_img, [[0,0],[img_pad,img_pad],[img_pad,img_pad],[0,0]])
-
+        # this is a very simple and straightforward kernel
         output_img = fft_conv2d(input_img, psf)
 
         #output_img = tf.slice(output_img, [0,img_pad,img_pad,0], [-1,dims[1],dims[2],-1])
-
+        # (64+28+64, 64+28+64, 1)
         return output_img
 
 def shifted_relu(v):

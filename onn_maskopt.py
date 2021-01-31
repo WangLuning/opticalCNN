@@ -70,7 +70,7 @@ class PhaseMaskModel(model.Model):
     def _get_training_queue(self, batch_size, num_threads=4):
         dim = self.dim
         
-        file_list = tf.matching_files('/media/data/onn/quickdraw16_192/im_*.png')
+        file_list = tf.matching_files('assets/quickdraw16_192/im_*.png')
         filename_queue = tf.train.string_input_producer(file_list)
       
         image_reader = tf.WholeFileReader()
@@ -127,9 +127,10 @@ if __name__=='__main__':
     wavelength = 550e-9
     pixel_size = 6.5*1e-6
     n = 1.5090 # 1.4599
-    num_steps = 200001
+    num_steps = 21
     
     # change this file based on desired PSF
+    # just tile the 16 learned kernels together
     psf_file = 'assets/quickdraw16_tiledpsf_2.npy'
 
     phasemask = PhaseMaskModel(psf_file, dim, wave_res, wavelength, pixel_size, n=n, ckpt_path=None)
@@ -150,7 +151,7 @@ if __name__=='__main__':
                    batch_size=1,
                    adadelta_learning_rate = 1, 
                    starter_learning_rate = 0.0001,
-                   num_steps_until_save=500,
-                   num_steps_until_summary=50,
+                   num_steps_until_save=20,
+                   num_steps_until_summary=20,
                    logdir = log_dir,
                    num_steps = num_steps)
