@@ -98,9 +98,13 @@ def train(params, summary_every=100, print_every=250, save_every=1000, verbose=T
     # single tiled convolutional layer
     h_conv1 = optics_alt.tiled_conv_layer(x_image, params.tiling_factor, params.tile_size, params.kernel_size, 
                                           name='h_conv1', nonneg=params.isNonNeg, regularizer=psf_reg)
-    optics.attach_img("h_conv1", h_conv1)
+
+    h_conv2 = optics_alt.tiled_conv_layer(h_conv1, 1, 4, 4, 
+                                          name='h_conv2', nonneg=params.isNonNeg, regularizer=psf_reg)
+
+    optics.attach_img("h_conv2", h_conv2)
     # each split is of size (None, 39, 156, 1)
-    split_1d = tf.split(h_conv1, num_or_size_splits=4, axis=1)
+    split_1d = tf.split(h_conv2, num_or_size_splits=4, axis=1)
 
     # calculating output scores (16, None, 39, 39, 1)
     h_conv_split = tf.concat([tf.split(split_1d[0], num_or_size_splits=4, axis=2),

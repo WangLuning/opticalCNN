@@ -506,6 +506,7 @@ def tiled_conv_layer(input_img, tiling_factor, tile_size, kernel_size,
 
         img_pad = np.ceil(tile_size * tiling_factor / 2).astype(np.uint32)
         input_img_pad = tf.pad(input_img, [[0,0],[img_pad,img_pad],[img_pad,img_pad],[0,0]])
+
         # this is a very simple and straightforward kernel
         output_img = fft_conv2d(input_img, psf)
 

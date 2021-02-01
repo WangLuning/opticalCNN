@@ -1,0 +1,94 @@
+#################
+pure tiled cnn from the paper:
+step 0:  loss 49.1636,   reg_loss 0,     train acc 0.1
+step 10: validation acc 0.183125
+step 10:         loss 18.7627,   reg_loss 0,     train acc 0.3
+step 20: validation acc 0.290625
+step 20:         loss 23.1994,   reg_loss 0,     train acc 0.22
+step 30: validation acc 0.37125
+step 30:         loss 14.1639,   reg_loss 0,     train acc 0.34
+step 40: validation acc 0.401875
+step 40:         loss 15.1957,   reg_loss 0,     train acc 0.34
+step 50: validation acc 0.41
+step 50:         loss 13.0387,   reg_loss 0,     train acc 0.44
+step 60: validation acc 0.45625
+step 60:         loss 11.6035,   reg_loss 0,     train acc 0.5
+step 70: validation acc 0.501875
+step 70:         loss 14.0173,   reg_loss 0,     train acc 0.42
+step 80: validation acc 0.51875
+step 80:         loss 11.7486,   reg_loss 0,     train acc 0.46
+step 90: validation acc 0.5225
+step 90:         loss 8.71756,   reg_loss 0,     train acc 0.64
+step 100: validation acc 0.54875
+step 100:        loss 6.10088,   reg_loss 0,     train acc 0.7
+final step 9, train accuracy 0.7, test accuracy 0.428
+
+
+#################
+two-layer cnn, one tiled cnn and one simple small cnn
+step 0:  loss 180.117,   reg_loss 0,     train acc 0.1
+2021-01-31 21:51:51.072937: W tensorflow/core/framework/allocator.cc:107] Allocation of 623001600 exceeds 10% of system memory.
+2021-01-31 21:51:52.702492: W tensorflow/core/framework/allocator.cc:107] Allocation of 1246003200 exceeds 10% of system memory.
+2021-01-31 21:51:53.866634: W tensorflow/core/framework/allocator.cc:107] Allocation of 1246003200 exceeds 10% of system memory.
+2021-01-31 21:54:03.499103: W tensorflow/core/framework/allocator.cc:107] Allocation of 1246003200 exceeds 10% of system memory.
+2021-01-31 21:56:28.378197: W tensorflow/core/framework/allocator.cc:107] Allocation of 623001600 exceeds 10% of system memory.
+step 10: validation acc 0.18875
+step 10:         loss 46.8951,   reg_loss 0,     train acc 0.26
+step 20: validation acc 0.35125
+step 20:         loss 31.1565,   reg_loss 0,     train acc 0.42
+WARNING:tensorflow:From C:\Users\Administrator\Downloads\photonics_ML\frequency_comb\task9-cnn\stanford_cnn\onn\lib\site-packages\tensorflow\python\training\saver.py:960: remove_checkpoint (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to delete files with this prefix.
+W0131 22:21:44.518618 39980 deprecation.py:323] From C:\Users\Administrator\Downloads\photonics_ML\frequency_comb\task9-cnn\stanford_cnn\onn\lib\site-packages\tensorflow\python\training\saver.py:960: remove_checkpoint (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to delete files with this prefix.
+step 30: validation acc 0.389375
+step 30:         loss 33.9546,   reg_loss 0,     train acc 0.28
+step 40: validation acc 0.43875
+step 40:         loss 15.8547,   reg_loss 0,     train acc 0.54
+step 50: validation acc 0.444375
+step 50:         loss 24.6358,   reg_loss 0,     train acc 0.4
+
+
+#################
+dot-product adaptor structure:
+step 0:  loss 900.004,   reg_loss 0,     train acc 0.1
+step 10: validation acc 0.069375
+step 10:         loss 721.052,   reg_loss 0,     train acc 0.04
+step 20: validation acc 0.069375
+step 20:         loss 656.167,   reg_loss 0,     train acc 0.08
+step 30: validation acc 0.069375
+step 30:         loss 461.664,   reg_loss 0,     train acc 0.06
+step 40: validation acc 0.069375
+step 40:         loss 385.81,    reg_loss 0,     train acc 0.04
+step 50: validation acc 0.069375
+step 50:         loss 295.972,   reg_loss 0,     train acc 0.06
+step 60: validation acc 0.069375
+step 60:         loss 202.507,   reg_loss 0,     train acc 0.1
+
+
+#################
+pure tiled cnn from the paper:
+step 0:  loss 54.487,    reg_loss 0,     train acc 0.04
+step 100: validation acc 0.520625
+step 100:        loss 3.77829,   reg_loss 0,     train acc 0.64
+step 200: validation acc 0.580625
+step 200:        loss 5.68969,   reg_loss 0,     train acc 0.6
+step 300: validation acc 0.613125
+step 300:        loss 5.16577,   reg_loss 0,     train acc 0.68
+step 400: validation acc 0.64625
+step 400:        loss 7.21786,   reg_loss 0,     train acc 0.66
+step 500: validation acc 0.6375
+step 500:        loss 5.67215,   reg_loss 0,     train acc 0.74
+step 600: validation acc 0.6575
+step 600:        loss 6.24362,   reg_loss 0,     train acc 0.7
+step 700: validation acc 0.67625
+step 700:        loss 6.35358,   reg_loss 0,     train acc 0.66
+step 800: validation acc 0.68625
+step 800:        loss 4.31848,   reg_loss 0,     train acc 0.78
+step 900: validation acc 0.660625
+step 900:        loss 6.01436,   reg_loss 0,     train acc 0.7
+step 1000: validation acc 0.6925
+step 1000:       loss 4.90717,   reg_loss 0,     train acc 0.74
+final step 9, train accuracy 0.74, test accuracy 0.61
+

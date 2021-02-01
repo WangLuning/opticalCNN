@@ -15,6 +15,7 @@ import layers.optics as optics
 import layers.optics_alt as optics_alt
 from layers.utils import *
 
+tf.compat.v1.disable_eager_execution()
 
 FUNCTION_MAP = {'relu' : tf.nn.relu,
                 'identity' : tf.identity}
@@ -95,22 +96,25 @@ def train(params, summary_every=100, print_every=250, save_every=1000, verbose=T
         psf_reg = None
     
     # build model 
-    # single tiled convolutional layer
-    h_conv1 = optics_alt.tiled_conv_layer(x_image, params.tiling_factor, params.tile_size, params.kernel_size, 
-                                          name='h_conv1', nonneg=params.isNonNeg, regularizer=psf_reg)
-    optics.attach_img("h_conv1", h_conv1)
-    # each split is of size (None, 39, 156, 1)
-    split_1d = tf.split(h_conv1, num_or_size_splits=4, axis=1)
+    # three single convolutional layer as Q, K, V
+    q_conv1 = optics_alt.tiled_conv_layer(x_image, params.tiling_factor, params.tile_size, params.kernel_size, 
+                                          name='q_conv1', nonneg=params.isNonNeg, regularizer=psf_reg)
+    k_conv1 = optics_alt.tiled_conv_layer(x_image, params.tiling_factor, params.tile_size, params.kernel_size, 
+                                          name='k_conv1', nonneg=params.isNonNeg, regularizer=psf_reg)
+    v_conv1 = optics_alt.tiled_conv_layer(x_image, params.tiling_factor, params.tile_size, params.kernel_size, 
+                                          name='v_conv1', nonneg=params.isNonNeg, regularizer=psf_reg)
 
-    # calculating output scores (16, None, 39, 39, 1)
-    h_conv_split = tf.concat([tf.split(split_1d[0], num_or_size_splits=4, axis=2),
-                              tf.split(split_1d[1], num_or_size_splits=4, axis=2),
-                              tf.split(split_1d[2], num_or_size_splits=4, axis=2),
-                              tf.split(split_1d[3], num_or_size_splits=4, axis=2)], 0)
+    # (None, 156, 156, 1)
+    weight = tf.multiply(q_conv1, k_conv1)
+    reduced_weight = tf.math.reduce_sum(weight, [2,3])
+    reduced_weight = tf.nn.softmax(reduced_weight)
+    att = tf.multiply(tf.expand_dims(reduced_weight, 2), tf.squeeze(v_conv1, [3]))
+    att = tf.reshape(att, [-1, 16, x_image.shape[1]*x_image.shape[2]//4//4])
+
     if params.doMean:
-        y_out = tf.transpose(tf.reduce_mean(h_conv_split, axis=[2,3,4]))
+        y_out = tf.reduce_mean(att, axis=[2])
     else:
-        y_out = tf.transpose(tf.reduce_max(h_conv_split, axis=[2,3,4]))
+        y_out = tf.reduce_max(att, axis=[2])
 
     tf.summary.image('output', tf.reshape(y_out, [-1, 4, 4, 1]), 3)
 
@@ -182,6 +186,7 @@ def train(params, summary_every=100, print_every=250, save_every=1000, verbose=T
     train_writer.close()
     test_writer.close()
 
+
 def main(_):
     if tf.gfile.Exists(params.log_dir):
         tf.gfile.DeleteRecursively(params.log_dir)
@@ -194,20 +199,17 @@ def main(_):
     params.activation = 'identity' # functools.partial(shifted_relu, thresh=10.0)
     params.opt_type = 'ADAM'
     
-    params.doMultichannelConv = False
-    params.doMean = False
     params.doOpticalConv = False
     
-    params.doNonnegReg = False
-    
-    params.padamt = 64
+    params.padamt = 32
     params.dim = 40*4
     
-    # there are 4 * 4 kernels laterally
-    params.tiling_factor = 4
+    # how many tiled kernels
+    params.tiling_factor = 1
     # leave some protective bands?
-    params.tile_size = 40
+    params.tile_size = 32
     params.kernel_size = 32
+    params.num_classes = 16
 
     train(params, summary_every=10, print_every=10, save_every=10, verbose=True)
 
